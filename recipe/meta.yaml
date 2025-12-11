@@ -1,13 +1,13 @@
-{% set name = "<PLEASE ADD PKG NAME>" %}
-{% set version = "<PLEASE ADD PKG VERSION>" %}
+{% set name = "cel-python" %}
+{% set version = "0.2.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: <sha256>
+  url: https://github.com/cloud-custodian/{{ name }}/archive/refs/tags/v{{ version[:-2] }}.tar.gz
+  sha256: 3c565c341ec3a8900a427e325c24f8af5c1fef55d03ffccda5a25078d134e89a
 
 build:
   number: 0
@@ -18,28 +18,37 @@ requirements:
   host:
     - python
     - pip
+    - poetry-core
   run:
     - python
+    - jmespath >=1.0.1,<2.0.0
+    - lark >=0.12.0,<0.13.0
+    - python-dateutil >=2.9.0.post0,<3.0.0
+    - pyyaml >=6.0.1,<7.0.0
+    - types-pyyaml >=6.0.12.20240311,<7.0.0
+    - types-python-dateutil >=2.9.0.20240316,<3.0.0
 
 test:
   imports:
-    - {{ name.replace('-', '.') }}
+    - celpy
+  source_files:
+    - tests/
   requires:
     - pip
+    - pytest
   commands:
     - pip check
+    # Skip test_c7n_to_cel.py - ModuleNotFoundError: xlate
+    - pytest -v --ignore=tests/test_c7n_to_cel.py tests/
 
 about:
-  home: <PLEASE ADD HOME URL>
-  summary: <PLEASE ADD SUMMARY>
+  home: https://github.com/cloud-custodian/cel-python
+  summary: Pure Python implementation of the Common Expression Language
   description: |
-    <PLEASE ADD DESCRIPTION>
-  license: <PLEASE ADD LICENSE>
-  license_family: <PLEASE ADD LICENSE_FAMILY>
-  license_file: <PLEASE_ADD_LICENSE_FILE>
-  dev_url: <PLEASE ADD DEV URL>
-  doc_url: <PLEASE ADD DOC URL>
-
-extra:
-  recipe-maintainers:
-    - Jrice1317
+    Pure Python implementation of Google Common Expression Language,
+    https://opensource.google/projects/cel.
+  license: Apache-2.0
+  license_family: APACHE
+  license_file: LICENSE
+  dev_url: https://github.com/cloud-custodian/cel-python
+  doc_url: https://cloud-custodian.github.io/cel-python/build/html/index.html
