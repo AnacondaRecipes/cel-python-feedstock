@@ -1,4 +1,2 @@
 channels:
   - https://staging.continuum.io/pbp/fs/lark-feedstock/pr3/b9ef0a8
-  - https://staging.continuum.io/pbp/fs/types-python-dateutil-feedstock/pr11/79e4c40
-  - https://staging.continuum.io/pbp/fs/types-pyyaml-feedstock/pr6/0046854
