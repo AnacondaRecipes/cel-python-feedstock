@@ -8,9 +8,11 @@ package:
 source:
   url: https://github.com/cloud-custodian/{{ name }}/archive/refs/tags/v{{ version[:-2] }}.tar.gz
   sha256: 3c565c341ec3a8900a427e325c24f8af5c1fef55d03ffccda5a25078d134e89a
+  patches:
+    - patches/0001-Fix-package-name.patch
 
 build:
-  number: 0
+  number: 1
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   skip: True  # [py<38]
 
