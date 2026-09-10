@@ -45,7 +45,7 @@ test:
   commands:
     - pip check
     # Skip test_c7n_to_cel.py - ModuleNotFoundError: xlate
-    - pytest -v --ignore=tests/test_c7n_to_cel.py tests/ # [py<312]
+    - pytest -vv {{ deselect_tests }} --ignore=tests/test_c7n_to_cel.py tests/ # [py<312]
     # For python >=3.12 skip test with: TypeError: can't subtract offset-naive and offset-aware datetimes
     # This is an implementation issue for these python versions.
     - pytest -vv {{ deselect_tests }} --ignore=tests/test_c7n_to_cel.py -k "not test_extended_timestamp_type" tests/ # [py>=312]
