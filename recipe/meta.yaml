@@ -1,34 +1,38 @@
 {% set name = "cel-python" %}
-{% set version = "0.2.0" %}
+{% set version = "0.5.0" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
   url: https://github.com/cloud-custodian/{{ name }}/archive/refs/tags/v{{ version[:-2] }}.tar.gz
-  sha256: 3c565c341ec3a8900a427e325c24f8af5c1fef55d03ffccda5a25078d134e89a
-  patches:
-    - patches/0001-Fix-package-name.patch
+  sha256: b370b2494e838a05e9a0d3bdabe045640fb2cc46c4fb9d853cb0559f513eeed9
 
 build:
-  number: 2
+  number: 0
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-  skip: True  # [py<38]
+  skip: true  # [py<310]
 
 requirements:
   host:
     - python
     - pip
-    - poetry-core
+    - hatchling
   run:
     - python
-    - jmespath >=1.0.1,<2.0.0
-    - lark >=0.12.0,<0.13.0
-    - python-dateutil >=2.9.0.post0,<3.0.0
-    - pyyaml >=6.0.1,<7.0.0
-    - types-pyyaml >=6.0.12.20240311,<7.0.0
-    - types-python-dateutil >=2.9.0.20240316,<3.0.0
+    - google-re2 >=1.1.20240702
+    - google-re2 >=1.1.20250722  # [py==313]
+    - jmespath >=1.0.1
+    - lark >=1.2.2
+    - pendulum >=3.1.0
+    - pyyaml >=6.0.2
+    - tomli >=1.1.0  # [py<311]
+
+
+{% set deselect_tests = "" %}
+# AttributeError: module 'os' has n...
+{% set deselect_tests = deselect_tests + " --deselect=tests/test_main.py::test_stat_good" %}  # [win]
 
 test:
   imports:
@@ -40,11 +44,12 @@ test:
     - pytest
   commands:
     - pip check
+    - python -m celpy --help
     # Skip test_c7n_to_cel.py - ModuleNotFoundError: xlate
-    - pytest -v --ignore=tests/test_c7n_to_cel.py tests/ # [py<312]
+    - pytest -vv {{ deselect_tests }} --ignore=tests/test_c7n_to_cel.py tests/ # [py<312]
     # For python >=3.12 skip test with: TypeError: can't subtract offset-naive and offset-aware datetimes
     # This is an implementation issue for these python versions.
-    - pytest -v --ignore=tests/test_c7n_to_cel.py -k "not test_extended_timestamp_type" tests/ # [py>=312]
+    - pytest -vv {{ deselect_tests }} --ignore=tests/test_c7n_to_cel.py -k "not test_extended_timestamp_type" tests/ # [py>=312]
 
 about:
   home: https://github.com/cloud-custodian/cel-python
