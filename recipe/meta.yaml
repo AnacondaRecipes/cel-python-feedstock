@@ -44,6 +44,7 @@ test:
     - pytest
   commands:
     - pip check
+    - python -m celpy --help
     # Skip test_c7n_to_cel.py - ModuleNotFoundError: xlate
     - pytest -vv {{ deselect_tests }} --ignore=tests/test_c7n_to_cel.py tests/ # [py<312]
     # For python >=3.12 skip test with: TypeError: can't subtract offset-naive and offset-aware datetimes
